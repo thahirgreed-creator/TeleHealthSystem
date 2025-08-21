@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { AuthState, User, RegisterData } from '../types';
-
-const API_URL = 'http://localhost:5000/api';
+import { buildApiUrl, createAuthHeaders, API_ENDPOINTS } from '../config/api';
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -14,19 +13,18 @@ export const useAuthStore = create<AuthState>()(
       login: async (email: string, password: string) => {
         set({ isLoading: true });
         try {
-          const response = await fetch(`${API_URL}/auth/login`, {
+          const response = await fetch(buildApiUrl(API_ENDPOINTS.AUTH.LOGIN), {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: createAuthHeaders(null),
             body: JSON.stringify({ email, password }),
           });
 
+          const data = await response.json();
+          
           if (!response.ok) {
-            throw new Error('Login failed');
+            throw new Error(data.error || 'Login failed');
           }
 
-          const data = await response.json();
           set({ user: data.user, token: data.token, isLoading: false });
         } catch (error) {
           set({ isLoading: false });
@@ -37,19 +35,18 @@ export const useAuthStore = create<AuthState>()(
       register: async (userData: RegisterData) => {
         set({ isLoading: true });
         try {
-          const response = await fetch(`${API_URL}/auth/register`, {
+          const response = await fetch(buildApiUrl(API_ENDPOINTS.AUTH.REGISTER), {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: createAuthHeaders(null),
             body: JSON.stringify(userData),
           });
 
+          const data = await response.json();
+          
           if (!response.ok) {
-            throw new Error('Registration failed');
+            throw new Error(data.error || 'Registration failed');
           }
 
-          const data = await response.json();
           set({ user: data.user, token: data.token, isLoading: false });
         } catch (error) {
           set({ isLoading: false });

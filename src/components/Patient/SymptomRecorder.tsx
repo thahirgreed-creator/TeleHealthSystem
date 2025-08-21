@@ -64,13 +64,11 @@ const SymptomRecorder = () => {
 
     try {
       await createReport({
-        patientId: user._id,
         symptoms,
         description,
         severity,
         duration,
         audioTranscript: audioURL ? 'Audio recording available' : undefined,
-        status: 'pending',
       });
 
       // Reset form

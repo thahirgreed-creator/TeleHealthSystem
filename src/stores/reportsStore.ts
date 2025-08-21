@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 import { SymptomReport } from '../types';
 import { useAuthStore } from './authStore';
-
-const API_URL = 'http://localhost:5000/api';
+import { buildApiUrl, createAuthHeaders, API_ENDPOINTS } from '../config/api';
 
 interface ReportsState {
   reports: SymptomReport[];
@@ -23,12 +22,9 @@ export const useReportsStore = create<ReportsState>((set, get) => ({
     set({ isLoading: true });
     try {
       const { token } = useAuthStore.getState();
-      const response = await fetch(`${API_URL}/reports`, {
+      const response = await fetch(buildApiUrl(API_ENDPOINTS.REPORTS.BASE), {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: createAuthHeaders(token),
         body: JSON.stringify(reportData),
       });
 
@@ -49,8 +45,8 @@ export const useReportsStore = create<ReportsState>((set, get) => ({
     set({ isLoading: true });
     try {
       const { token } = useAuthStore.getState();
-      const response = await fetch(`${API_URL}/reports/patient/${patientId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await fetch(buildApiUrl(API_ENDPOINTS.REPORTS.PATIENT(patientId)), {
+        headers: createAuthHeaders(token),
       });
 
       if (!response.ok) throw new Error('Failed to fetch reports');
@@ -59,7 +55,7 @@ export const useReportsStore = create<ReportsState>((set, get) => ({
       set({ reports, isLoading: false });
     } catch (error) {
       set({ isLoading: false });
-      throw error;
+      console.error('Error fetching patient reports:', error);
     }
   },
 
@@ -67,29 +63,27 @@ export const useReportsStore = create<ReportsState>((set, get) => ({
     set({ isLoading: true });
     try {
       const { token } = useAuthStore.getState();
-      const response = await fetch(`${API_URL}/reports`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await fetch(buildApiUrl(API_ENDPOINTS.REPORTS.BASE), {
+        headers: createAuthHeaders(token),
       });
 
       if (!response.ok) throw new Error('Failed to fetch reports');
       
-      const reports = await response.json();
+      const data = await response.json();
+      const reports = data.reports || data;
       set({ reports, isLoading: false });
     } catch (error) {
       set({ isLoading: false });
-      throw error;
+      console.error('Error fetching all reports:', error);
     }
   },
 
   updateReportStatus: async (reportId: string, status: SymptomReport['status']) => {
     try {
       const { token } = useAuthStore.getState();
-      const response = await fetch(`${API_URL}/reports/${reportId}`, {
+      const response = await fetch(buildApiUrl(`${API_ENDPOINTS.REPORTS.BASE}/${reportId}`), {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: createAuthHeaders(token),
         body: JSON.stringify({ status }),
       });
 

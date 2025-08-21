@@ -14,28 +14,50 @@ export interface User {
 
 export interface SymptomReport {
   _id: string;
-  patientId: string;
+  patientId: string | User;
   symptoms: string[];
   description: string;
   audioTranscript?: string;
   severity: 'mild' | 'moderate' | 'severe';
   duration: string;
   status: 'pending' | 'reviewed' | 'consultation_requested';
+  reviewedBy?: string | User;
+  reviewNotes?: string;
+  aiAnalysis?: {
+    possibleConditions: string[];
+    recommendedActions: string[];
+    urgencyLevel: 'low' | 'medium' | 'high' | 'critical';
+  };
   createdAt: string;
   updatedAt: string;
 }
 
 export interface Consultation {
   _id: string;
-  patientId: string;
-  doctorId: string;
+  patientId: string | User;
+  doctorId: string | User;
   reportId?: string;
   scheduledAt: string;
   status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
   type: 'video' | 'audio' | 'chat';
   notes?: string;
-  prescription?: string;
-  followUp?: string;
+  prescription?: {
+    medications: Array<{
+      name: string;
+      dosage: string;
+      frequency: string;
+      duration: string;
+      instructions: string;
+    }>;
+    notes: string;
+  };
+  followUp?: {
+    required: boolean;
+    scheduledDate?: string;
+    instructions?: string;
+  };
+  duration?: number;
+  meetingUrl?: string;
   createdAt: string;
   updatedAt: string;
 }

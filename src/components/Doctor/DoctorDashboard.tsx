@@ -11,9 +11,16 @@ const DoctorDashboard = () => {
   const { consultations, getUserConsultations } = useConsultationsStore();
 
   useEffect(() => {
-    getAllReports();
-    getUserConsultations();
-  }, []);
+    const fetchData = async () => {
+      try {
+        await getAllReports();
+        await getUserConsultations();
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    };
+    fetchData();
+  }, [getAllReports, getUserConsultations]);
 
   const pendingReports = reports.filter(r => r.status === 'pending');
   const todayConsultations = consultations.filter(c => 
@@ -103,7 +110,7 @@ const DoctorDashboard = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900">
-                        Patient #{report.patientId.slice(-4)}
+                        Patient #{typeof report.patientId === 'string' ? report.patientId.slice(-4) : 'Unknown'}
                       </p>
                       <p className="text-sm text-gray-600 mt-1">
                         {report.symptoms.slice(0, 2).join(', ')}
@@ -150,7 +157,7 @@ const DoctorDashboard = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900">
-                        Patient #{consultation.patientId.slice(-4)}
+                        Patient #{typeof consultation.patientId === 'string' ? consultation.patientId.slice(-4) : 'Unknown'}
                       </p>
                       <div className="flex items-center mt-1 space-x-4">
                         <span className="text-xs text-gray-500">

@@ -12,10 +12,17 @@ const PatientDashboard = () => {
 
   useEffect(() => {
     if (user) {
-      getPatientReports(user._id);
-      getUserConsultations();
+      const fetchData = async () => {
+        try {
+          await getPatientReports(user._id);
+          await getUserConsultations();
+        } catch (error) {
+          console.error('Error fetching dashboard data:', error);
+        }
+      };
+      fetchData();
     }
-  }, [user]);
+  }, [user, getPatientReports, getUserConsultations]);
 
   const recentReports = reports.slice(0, 3);
   const upcomingConsultations = consultations
@@ -144,7 +151,7 @@ const PatientDashboard = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900">
-                        Dr. {consultation.doctorId} {/* In real app, fetch doctor name */}
+                        Dr. {typeof consultation.doctorId === 'string' ? consultation.doctorId.slice(-4) : 'Unknown'}
                       </p>
                       <div className="flex items-center mt-1 space-x-4">
                         <span className="flex items-center text-xs text-gray-500">
