@@ -28,10 +28,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/telehealth', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/telehealth')
 .then(() => {
   console.log('Connected to MongoDB');
 })
@@ -90,21 +87,28 @@ app.use((error, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Telehealth API server running on port ${PORT}`);
   console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 API Health: http://localhost:${PORT}/api/health`);
+  console.log(`🌐 CORS enabled for: ${process.env.NODE_ENV === 'production' ? 'production domains' : 'http://localhost:3000, http://localhost:5173'}`);
 });
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
   console.log('SIGTERM received. Shutting down gracefully...');
+  server.close(() => {
+    console.log('HTTP server closed.');
+  });
   await mongoose.connection.close();
   process.exit(0);
 });
 
 process.on('SIGINT', async () => {
   console.log('SIGINT received. Shutting down gracefully...');
+  server.close(() => {
+    console.log('HTTP server closed.');
+  });
   await mongoose.connection.close();
   process.exit(0);
 });
