@@ -10,6 +10,13 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PatientDashboard from './components/Patient/PatientDashboard';
 import DoctorDashboard from './components/Doctor/DoctorDashboard';
 import SymptomRecorder from './components/Patient/SymptomRecorder';
+import ConsultationsList from './components/Patient/ConsultationsList';
+import MedicalHistory from './components/Patient/MedicalHistory';
+import LabResults from './components/Patient/LabResults';
+import PatientsList from './components/Doctor/PatientsList';
+import ReportsList from './components/Doctor/ReportsList';
+import OutbreakAlerts from './components/Doctor/OutbreakAlerts';
+import NotificationCenter from './components/Shared/NotificationCenter';
 
 function App() {
   const { user } = useAuthStore();
@@ -48,66 +55,45 @@ function App() {
           
           <Route path="consultations" element={
             <ProtectedRoute requiredRole="patient">
-              <div className="text-center py-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Consultations</h2>
-                <p className="text-gray-600">Patient consultations view - Coming soon</p>
-              </div>
+              <ConsultationsList />
             </ProtectedRoute>
           } />
           
           <Route path="history" element={
             <ProtectedRoute requiredRole="patient">
-              <div className="text-center py-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Medical History</h2>
-                <p className="text-gray-600">Medical history view - Coming soon</p>
-              </div>
+              <MedicalHistory />
             </ProtectedRoute>
           } />
           
           <Route path="lab-results" element={
             <ProtectedRoute requiredRole="patient">
-              <div className="text-center py-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Lab Results</h2>
-                <p className="text-gray-600">Lab results view - Coming soon</p>
-              </div>
+              <LabResults />
             </ProtectedRoute>
           } />
           
           {/* Doctor Routes */}
           <Route path="patients" element={
             <ProtectedRoute requiredRole="doctor">
-              <div className="text-center py-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Patients</h2>
-                <p className="text-gray-600">Patient management view - Coming soon</p>
-              </div>
+              <PatientsList />
             </ProtectedRoute>
           } />
           
           <Route path="reports" element={
             <ProtectedRoute requiredRole="doctor">
-              <div className="text-center py-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Symptom Reports</h2>
-                <p className="text-gray-600">Symptom reports review - Coming soon</p>
-              </div>
+              <ReportsList />
             </ProtectedRoute>
           } />
           
           <Route path="alerts" element={
             <ProtectedRoute requiredRole="doctor">
-              <div className="text-center py-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Outbreak Alerts</h2>
-                <p className="text-gray-600">Outbreak monitoring - Coming soon</p>
-              </div>
+              <OutbreakAlerts />
             </ProtectedRoute>
           } />
           
           {/* Shared Routes */}
           <Route path="notifications" element={
             <ProtectedRoute>
-              <div className="text-center py-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Notifications</h2>
-                <p className="text-gray-600">Notification center - Coming soon</p>
-              </div>
+              <NotificationCenter />
             </ProtectedRoute>
           } />
         </Route>

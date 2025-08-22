@@ -64,7 +64,7 @@ export interface Consultation {
 
 export interface LabResult {
   _id: string;
-  patientId: string;
+  patientId: string | User;
   testName: string;
   testDate: string;
   results: string;
@@ -72,6 +72,12 @@ export interface LabResult {
   fileUrl?: string;
   normalRange?: string;
   status: 'normal' | 'abnormal' | 'critical';
+  orderedBy?: string | User;
+  labFacility?: {
+    name: string;
+    address?: string;
+    contact?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -82,10 +88,28 @@ export interface Alert {
   title: string;
   message: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
-  targetUsers: string[];
+  targetUsers?: string[];
+  targetRoles?: string[];
+  geographicArea?: {
+    country?: string;
+    region?: string;
+    city?: string;
+    coordinates?: {
+      type: string;
+      coordinates: number[];
+    };
+    radius?: number;
+  };
   isRead: boolean;
+  metadata?: {
+    symptomPattern?: string[];
+    affectedCount?: number;
+    relatedReports?: string[];
+  };
   createdAt: string;
+  updatedAt: string;
   expiresAt?: string;
+  isActive?: boolean;
 }
 
 export interface AuthState {
